@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from corsheaders.middleware import CorsMiddleware
 from corsheaders.defaults import default_headers
+import os
 
 CORS_ALLOW_HEADERS = default_headers + (
     'Access-Control-Allow-Origin',
@@ -64,6 +65,8 @@ ROOT_URLCONF = "focus.urls"
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CSRF_TRUSTED_ORIGINS = ['*']
 
 TEMPLATES = [
     {
@@ -130,6 +133,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
