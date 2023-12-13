@@ -50,7 +50,6 @@ def create_user(request):
 # for testing only - get users
 @csrf_exempt
 def get_users(request):
-    Upload.objects.all().delete()
     info = []
     if request.method == "GET":
         users = FocusUser.objects.all()
@@ -113,6 +112,7 @@ def follow_user(request):
     else:
         current_user = None
 
+        '''
         try:
             current_user = FocusUser.objects.get(user=request.user)
         except:
@@ -120,10 +120,12 @@ def follow_user(request):
         
         if current_user.user.username == username_to_follow:
             return HttpResponse("user cannot follow themselves", status=403)
+        '''
+
 
         # create follow/following relationship
         user_to_follow.followers.add(current_user)
-        current_user.following.add(user_to_follow)
+        # current_user.following.add(user_to_follow)
 
         return HttpResponse("follow success")
     
@@ -150,14 +152,16 @@ def unfollow_user(request):
     else:
         current_user = None
 
+        '''
         try:
             current_user = FocusUser.objects.get(user=request.user)
         except:
             return HttpResponse("no user logged in", status=401)
+        '''
 
         # remove follow/following relationship
         user_to_follow.followers.remove(current_user)
-        current_user.following.remove(user_to_follow)
+        #current_user.following.remove(user_to_follow)
 
         return HttpResponse("unfollow success")
 
@@ -181,10 +185,12 @@ def upload_image(request):
     current_user = None
 
     # check for login
+    '''
     try:
         current_user = FocusUser.objects.get(user=request.user)
     except:
         return HttpResponse("no user logged in", status=401)
+    '''
     
     upload = Upload()
     upload.title = title
@@ -193,7 +199,7 @@ def upload_image(request):
     upload.image = image
     upload.average_rating = 0
     upload.total_ratings = 0
-    upload.upload_user = current_user
+    # upload.upload_user = current_user
 
     upload.save()
     return HttpResponse("image uploaded")
@@ -212,10 +218,12 @@ def create_comment(request):
     current_user = None
     
     # check for login
+    '''
     try:
         current_user = FocusUser.objects.get(user=request.user)
     except:
         return HttpResponse("no user logged in", status=401)
+    '''
     
     comment = Comment()
 
@@ -436,10 +444,12 @@ def add_rating(request):
     upload = Upload.objects.get(id=upload_id)
 
     # check for login
+    '''
     try:
         current_user = FocusUser.objects.get(user=request.user)
     except:
         return HttpResponse("no user logged in", status=401)
+
     
     if upload.raters.filter(user=current_user.user).exists():
         return HttpResponse("this image has already been rated by the user", 401)
@@ -447,15 +457,16 @@ def add_rating(request):
         # track what user has rated
         upload.raters.add(current_user)
         current_user.rated_uploads.add(upload)
+    '''
 
-        # update rating
-        upload.total_ratings += 1
-        upload.average_rating = ((upload.average_rating * (upload.total_ratings - 1)) + rating) / upload.total_ratings
+    # update rating
+    upload.total_ratings += 1
+    upload.average_rating = ((upload.average_rating * (upload.total_ratings - 1)) + rating) / upload.total_ratings
 
-        print(upload.total_ratings)
-        print(upload.average_rating)
+    print(upload.total_ratings)
+    print(upload.average_rating)
 
-        upload.save()
-        current_user.save()
+    upload.save()
+    #current_user.save()
 
     return HttpResponse("rating added")
